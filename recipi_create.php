@@ -24,7 +24,7 @@ if (
 //     exit('データが足りません');
 // }
 
-// todo_create.php
+
 
 $title = $_POST['title'];
 $Introduction = $_POST['Introduction'];
