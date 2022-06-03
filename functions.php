@@ -2,7 +2,7 @@
 // データベースに接続
 function connectDB()
 {
-    $param = 'mysql:dbname=recipi_image;host=localhost';
+    $param = 'mysql:dbname=my;host=localhost';
     try {
         $pdo = new PDO($param, 'root', '');
         return $pdo;
