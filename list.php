@@ -55,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                             </a>
                             <div class="media-body">
                                 <h5><?= $images[$i]['image_name']; ?> (<?= number_format($images[$i]['image_size'] / 1000, 2); ?> KB)</h5>
-                                <a href="#"><i class="far fa-trash-alt"></i> 削除</a>
+                                <a href="javascript:void(0);" onclick="var ok = confirm('削除しますか？'); if (ok) location.href='delete.php?id=<?= $images[$i]['imageid']; ?>'">
+                                    <i class="far fa-trash-alt"></i> 削除</a>
                             </div>
                         </li>
                     <?php endfor; ?>
