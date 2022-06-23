@@ -11,7 +11,7 @@ $pdo = connectDB();
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   // 画像を取得
-  // SQL作成&実行
+
   $sql = 'SELECT * FROM recipi_image ORDER BY created_at ASC';
   $stmt = $pdo->prepare($sql);
   $stmt->execute();
