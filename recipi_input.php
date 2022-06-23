@@ -1,3 +1,13 @@
+<?php
+
+session_start();
+include('recipi_function.php');
+check_session_id();
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -12,7 +22,7 @@
   <form action="recipi_create.php" method="POST" enctype="multipart/form-data">
     <fieldset>
       <legend>レシピの作成</legend>
-      <a href="recipi_select.php">一覧画面</a>
+      <a href="recipi_select.php">一覧画面</a><?= $_SESSION['username']; ?>
       <div>
         料理名: <input type="text" name="title">
       </div>
@@ -39,7 +49,7 @@
       </div>
     </fieldset>
   </form>
-
+  <a href="toppage.html">TOPに戻る</a>
 </body>
 
 </html>

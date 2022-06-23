@@ -1,4 +1,9 @@
 <?php
+
+session_start();
+include('recipi_function.php');
+check_session_id();
+
 require_once 'recipi_function.php';
 
 $pdo = connectDB();

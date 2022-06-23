@@ -1,5 +1,10 @@
 <?php
 
+session_start();
+include('recipi_function.php');
+check_session_id();
+
+
 // DB接続
 require_once 'recipi_function.php';
 $pdo = connectDB();
@@ -12,31 +17,38 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   $stmt->execute();
   $recipi_image = $stmt->fetchAll();
 }
-$sql = 'SELECT title, Introduction,material,how FROM recipi_test ORDER BY title ASC';
+$sql = 'SELECT * FROM recipi_test LEFT OUTER JOIN ( SELECT recipi_id, COUNT(id) AS like_count FROM like_table GROUP BY recipi_id ) AS result_table ON recipi_test.id = result_table.recipi_id;';
 
 $stmt = $pdo->prepare($sql);
 
 try {
   $status = $stmt->execute();
-  $result = $stmt->fetchALL(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+  echo json_encode(["sql error" => "{$e->getMessage()}"]);
+  exit();
+}
+$result = $stmt->fetchALL(PDO::FETCH_ASSOC);
+$output = "";
 
-  $output = "";
-  foreach ($result as $record) {
-    $output .= "
+$user_id = $_SESSION['user_id'];
+
+foreach ($result as $record) {
+  $output .= "
     <tr>
       <td>{$record["title"]}</td>
       <td>{$record["Introduction"]}</td>
       <td>{$record["material"]}</td>
       <td>{$record["how"]}</td>
+      <td><a href='like_create.php?user_id={$user_id}&recipi_id={$record["id"]}'>いいね{$record["like_count"]}</a></td>
         
     </tr>
   ";
-    echo '<script>console.log(' . json_encode($output) . ');</script>';
-  }
-} catch (PDOException $e) {
-  echo json_encode(["sql error" => "{$e->getMessage()}"]);
-  exit();
+  echo '<script>console.log(' . json_encode($output) . ');</script>';
 }
+// } catch (PDOException $e) {
+//   echo json_encode(["sql error" => "{$e->getMessage()}"]);
+//   exit();
+// }
 
 
 
@@ -60,7 +72,7 @@ try {
 <body>
   <fieldset>
     <legend>レシピ集）</legend>
-    <a href="recipi_input.php">入力画面</a>
+    <a href="recipi_input.php">入力画面</a><?= $_SESSION['username']; ?>
     <table>
       <thead>
         <tr>
@@ -127,6 +139,7 @@ try {
       </div>
     </div>
   </div>
+  <a href="toppage.html">TOPに戻る</a>
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
