@@ -1,6 +1,6 @@
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD5zxWEDVHHW-DJ9tShYCnWxrC4thG8IHo",
+  apiKey: "",
   authDomain: "recipi-login.firebaseapp.com",
   projectId: "recipi-login",
   storageBucket: "recipi-login.appspot.com",
