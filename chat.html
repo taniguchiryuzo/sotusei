@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>chatApp</title>
+  <style>
+    #output li {
+      background: #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>チャットルーム</h1>
+  <!-- 入力場所を作成しよう -->
+  <form>
+    <fieldset>
+      <legend>チャット入力画面</legend>
+      <div>
+        名前: <input type="text" id="name">
+      </div>
+      <div>
+        コメント: <input type="text" id="text">
+      </div>
+      <div>
+        <button type="button" id="send">送信</button>
+      </div>
+    </fieldset>
+  </form>
+
+  <!-- データ出力場所 -->
+  <ul id="output"></ul>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script>
+    // 日時をいい感じの形式にする関数
+    function convertTimestampToDatetime(timestamp) {
+      const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+      const Y = _d.getFullYear();
+      const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+      const d = _d.getDate().toString().padStart(2, '0');
+      const H = _d.getHours().toString().padStart(2, '0');
+      const i = _d.getMinutes().toString().padStart(2, '0');
+      const s = _d.getSeconds().toString().padStart(2, '0');
+      return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+    }
+  </script>
+  <!-- 以下にfirebaseのコードを貼り付けよう -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-app.js";
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+
+      import {
+          getFirestore,
+          collection,
+          addDoc,
+          serverTimestamp,
+          onSnapshot,
+          query,
+          orderBy,
+        } from "https://www.gstatic.com/firebasejs/9.7.0/firebase-firestore.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyD4KWQrvgyFqcpif-hCHQlsoRCOTRxhzYI",
+        authDomain: "chat-879ee.firebaseapp.com",
+        projectId: "chat-879ee",
+        storageBucket: "chat-879ee.appspot.com",
+        messagingSenderId: "16450740474",
+        appId: "1:16450740474:web:33bed369e793bd99d6a943"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      // dbと通信が出来るようになる
+      const db = getFirestore(app);
+
+      // ボタンクリック時にDBにデータを追加する
+      $("#send").on("click", function () {
+          // 送信時に必要な処理
+          const postData = {
+          name:$('#name').val(),
+          text:$('#text').val(),
+          time:serverTimestamp(),
+      };
+    addDoc(collection(db, "chat"), postData);
+        $("#text").val("");
+    });
+
+    // chatapp.html
+
+      $("#text").on("keydown", function (e) {
+        if (e.keyCode === 13) {
+          const postData = {
+            name: $("#name").val(),
+            text: $("#text").val(),
+            time: serverTimestamp(),
+          };
+          addDoc(collection(db, "chat"), postData);
+          $("#text").val("");
+        }
+      });
+
+
+    const q = query(collection(db, "chat"), orderBy("time", "desc"));
+     // データ取得処理
+    //  onSnapshotを使うと自動でデータを取得してくれる
+      onSnapshot(q,collection(db, "chat"), (querySnapshot) => {
+        // querySnapshotに全部のデータが入っている
+        console.log(querySnapshot.docs);
+
+        // 生データは使いにくいのでほしいものだけを取り出してdocumentに入れていく
+        
+        const documents = [];
+        querySnapshot.docs.forEach(function (doc) {
+          const document = {
+            id: doc.id,
+            data: doc.data(),
+          };
+          documents.push(document);
+          });
+
+        console.log(documents);
+
+        //  documentsから表示したいデータを取り出して画面表示用のタグに埋め込む
+        const htmlElements = [];
+        documents.forEach(function (document) {
+          htmlElements.push(`
+            <li id="${document.id}">
+              <p>${document.data.name} at ${convertTimestampToDatetime(document.data.time.seconds)}</p>
+              <p>${document.data.text}</p>
+            </li>
+          `);
+        });
+
+        $("#output").html(htmlElements);
+
+      });
+
+
+
+</script>
+
+</body>
+
+</html>

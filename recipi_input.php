@@ -26,7 +26,13 @@
         作り方: <input type="text" name="how">
       </div>
       <div>
-        <label>写真</label> : <input type="file" name="image">
+        <label>写真</label> :
+        <div class="card-body">
+          <input type="file" id="selectImageID" accept="image/*" style="padding: 4px;">
+          <canvas id="canvas-area"></canvas>
+          <div id="OriginalFileUpload"></div>
+        </div>
+        <!-- <input type="file" name="image"> -->
       </div>
       <div>
         <button type="submit">レシピの登録</button>
