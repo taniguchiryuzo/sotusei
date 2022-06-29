@@ -28,7 +28,7 @@ $val = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$val) {
     // NG
     echo "<p>ログイン情報に誤りがあります</p>";
-    echo "<a href=recipi_login.php>ログイン</a>";
+    echo "<a href=login.html>ログイン</a>";
     exit();
 } else {
     // OK
